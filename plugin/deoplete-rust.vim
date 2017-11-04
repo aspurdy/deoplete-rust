@@ -6,11 +6,25 @@ let g:loaded_deoplete_rust=1
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
+function! s:defaultRacerPath()
+    let l:bin = systemlist('which racer')[0]
+    return v:shell_error ? '' : l:bin
+endfunction
+
+function! s:defaultRustSrcPath()
+    let rustc_root = systemlist('rustc --print sysroot')[0]
+    if v:shell_error
+        return ''
+    endif
+    let rustc_src_dir = rustc_root . '/lib/rustlib/src/rust/src'
+    return isdirectory(rustc_src_dir) ? rustc_src_dir : ''
+endfunction
+
 let g:deoplete#sources#rust#racer_binary=
-    \ get(g:, 'deoplete#sources#rust#racer_binary', '')
+    \ get(g:, 'deoplete#sources#rust#racer_binary', s:defaultRacerPath())
 
 let g:deoplete#sources#rust#rust_source_path=
-    \ get(g:, 'deoplete#sources#rust#rust_source_path', '')
+    \ get(g:, 'deoplete#sources#rust#rust_source_path', s:defaultRustSrcPath())
 
 let g:deoplete#sources#rust#documentation_max_height=
     \ get(g:, 'deoplete#sources#rust#documentation_max_height', 20)
